@@ -9,7 +9,7 @@ if not os.path.exists(f'{os.getenv("LOCALAPPDATA")}/XPlus Games/CodeRandom3'):
 
 
 t = str(datetime.datetime.now()).replace(':', '_')
-log_name = f'{os.getenv("LOCALAPPDATA")}/XPlus Games/CodeRandom3/{t} - log.log'
+log_name = f'{os.getenv("LOCALAPPDATA")}/XPlus Games/CodeRandom3/logs/{t} - log.log'
 print(log_name)
 
 with open(log_name, 'x') as fh:
