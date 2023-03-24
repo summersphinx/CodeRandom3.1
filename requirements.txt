@@ -1,6 +1,7 @@
 bugsplat==1.0.2
 certifi==2022.12.7
 cffi==1.15.1
+chardet==5.1.0
 charset-normalizer==3.1.0
 cryptography==39.0.2
 Deprecated==1.2.13
@@ -32,7 +33,8 @@ traceback2==1.4.0
 urllib3==1.26.15
 wget==3.2
 wheel==0.40.0
-wrapt==1.15.0
-wxPython==4.2.0
-log0~=1.0.1
-logzero~=1.7.0
+wrapt
+wxPython
+log0
+logzero
+pyglet

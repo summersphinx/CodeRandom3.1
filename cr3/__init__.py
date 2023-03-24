@@ -1,10 +1,28 @@
 import pandas as pd
 import os
+import PySimpleGUI as sg
+from cr3.buggy import log
 
+path = os.getenv('LOCALAPPDATA') + '/XPlus Games/CodeRandom3/'
+
+class Settings:
+
+    def __init__(self):
+        settings_dict = pd.read_csv(path + 'settings.csv', index_col=0, header=None).to_dict()[1]
+        log.info(settings_dict)
+        self.theme = settings_dict['theme']
+        self.darkness = settings_dict['dark mode'] == 'True'
+
+    def save(self, to_change,  new_value):
+        settings_dict = pd.read_csv(path + 'settings.csv', index_col=0, header=None).to_dict()[1]
+        settings_dict[to_change] = new_value
+        log.debug(type(settings_dict))
+        test = pd.DataFrame.from_dict(settings_dict, orient='index').to_csv(path + 'settings.csv')
+        log.info(test)
 
 # Credit Colors & Fonts for the Color Pallets used
 class Colors:
-    path = os.getenv('LOCALAPPDATA') + '/XPlus Games/CodeRandom3/'
+
     color_dict = pd.read_csv(path + 'color_dict.csv', index_col=0, header=None).to_dict()
 
     @staticmethod
@@ -33,7 +51,7 @@ class Colors:
         color_tree = Colors.GetColors()
         if dark_mode:
             color_tree[colors].reverse()
-        print(colors)
+        log.info(colors)
 
         theme = {
             'BACKGROUND': color_tree[colors][0],
@@ -50,3 +68,57 @@ class Colors:
         return theme
 
 
+def Layouts():
+    sg.theme('THEME')
+    sett = Settings()
+
+    menu = [
+        [sg.Button('Back', k='back', expand_x=True, visible=False)],
+        [sg.Button('New Game', k='new', expand_x=True)],
+        [sg.Button('Continue', k='cont', expand_x=True)],
+        [sg.Button('Docs', k='docs', expand_x=True)],
+        [sg.Button('Settings', k='settings', expand_x=True)],
+        [sg.Button('Credits', k='credits', expand_x=True)],
+        [sg.Button('Discord', k='discord', expand_x=True)],
+        [sg.Button('Quit', k='quit', expand_x=True)],
+    ]
+
+    start = [
+        [sg.Listbox(os.listdir(path+'/modes'), expand_x=True, expand_y=True)],
+        [sg.Button('< Start New Game >', k='start new', expand_x=True)]
+    ]
+
+    cont = [
+        [sg.Listbox(os.listdir(path+'/saves'), expand_x=True, expand_y=True)],
+        [sg.Button('< Continue >', k='cont save', expand_x=True)]
+    ]
+
+    settings_theme = [
+        [sg.InputOptionMenu(Colors.GetColors(path).keys(), expand_x=True, pad=(50, 10), default_value=sett.theme, k='theme')],
+        [sg.Checkbox('Dark Mode', k='dark mode', default=sett.darkness)]
+    ]
+
+    settings = [
+        [sg.Column(
+                [
+                    [sg.Frame('Theme', settings_theme)]
+                ],
+                scrollable=True,
+                vertical_scroll_only=True,
+                expand_y=True,
+                expand_x=True
+        )],
+        [sg.Button('Save', k='save settings')]
+    ]
+
+    layout = [
+        [sg.Text('CodeRandom3', font='Nunito 24 bold')],
+        [
+            sg.Frame('M\ne\nn\nu', menu, title_location='wn', vertical_alignment='c', element_justification='center'),
+            sg.Frame('Pick Mode', start, expand_x=True, expand_y=True, visible=False, k='new1'),
+            sg.Frame('Pick Save', cont, expand_x=True, expand_y=True, visible=False, k='cont1'),
+            sg.Frame('Settings', settings, expand_x=True, expand_y=True, visible=False, k='settings1')
+        ]
+    ]
+
+    return layout
