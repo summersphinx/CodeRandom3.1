@@ -81,11 +81,11 @@ def shift(string, key, encode=False):
         return Caesar(key).decipher(string).lower()
 
 
-def flip(string, encode=False):
+def flip(word, encode=False):
     if encode:
-        return Atbash.encipher(string).lower()
+        return Atbash().encipher(word).lower()
     else:
-        return Atbash.decipher(string).lower()
+        return Atbash().decipher(word).lower()
 
 
 def remove(string):
@@ -97,6 +97,7 @@ def run(to_encrypt:str, code:str):
     steps = code.split('\n')
 
     for step in steps:
+        log.debug(to_encrypt)
         breakdown = step.split(' ')
         log.debug(breakdown)
         if breakdown[0] == 'base6':
