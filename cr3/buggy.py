@@ -6,8 +6,9 @@ import PySimpleGUI as sg
 import traceback
 
 project_name = 'CodeRandom3'
+bugsplat = BugSplat(f'{project_name}', f'{project_name}.1', '0.1.2')
 
-if False:
+if True:
 
     if not os.path.exists(f'{os.getenv("LOCALAPPDATA")}/XPlus Games/{project_name}/logs'):
         os.makedirs(f'{os.getenv("LOCALAPPDATA")}/XPlus Games/{project_name}/logs', True)
@@ -27,15 +28,20 @@ if False:
     class Splat:
 
         def __init__(self, exception, email, log, user):
-            bugsplat = BugSplat(f'{project_name}', f'{project_name}', '0.1.1')
+
             if log:
                 # noinspection PyTypeChecker
-                bugsplat.post(exception, app_key='app_key', email=email, additional_file_paths=[log_name], user=user)
+                bugsplat.post(exception, app_key='cr3.1', email=email, additional_file_paths=[log_name], user=user)
             else:
-                bugsplat.post(exception, app_key='app_key', email=email, user=user)
+                bugsplat.post(
+                        ex=exception,
+                        app_key='app_key',
+                        email=email,
+                        user=user)
 
         def report(self, exception):
-            log.error(traceback.format_tb(exception.__traceback__))
+            log.error(''.join(traceback.format_tb(exception.__traceback__)))
+            log.error(exception)
             layout = [
                 [sg.Image(f'{os.getenv("LOCALAPPDATA")}/XPlus Games/{project_name}/bugsplat-brand.png', s=(50, 50)), sg.Text('An error has occurred. If you wish to help this game be better, then feel free to submit the bug below.')],
                 [sg.Frame('Error:', [
@@ -46,9 +52,13 @@ if False:
             ]
 
             erwn = sg.Window('Uh Oh!', layout, finalize=True, icon=f'{os.getenv("LOCALAPPDATA")}/XPlus Games/{project_name}/bugsplat.ico')
-            erwn['error'].update(traceback.format_tb(exception.__traceback__))
+            erwn['error'].update(''.join(traceback.format_tb(exception.__traceback__)))
             event, values = erwn.read(close=True)
+            log.debug(values)
             if values is None:
                 pass
             elif values['send']:
-                Splat(exception, values['email'], values['log'], values['name'])
+                Splat(exception=exception,
+                      email=values['email'],
+                      log=values['log'],
+                      user=values['name'])

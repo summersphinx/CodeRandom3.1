@@ -1,8 +1,7 @@
 import pandas as pd
 import os
 import PySimpleGUI as sg
-from cr3.tab import tab_group
-# from cr3.buggy import log
+from cr3.buggy import log
 
 path = os.getenv('LOCALAPPDATA') + '/XPlus Games/CodeRandom3/'
 
@@ -10,7 +9,7 @@ class Settings:
 
     def __init__(self):
         settings_dict = pd.read_csv(path + 'settings.csv', index_col=0, header=None).to_dict()[1]
-        print(settings_dict)
+        log.info(settings_dict)
         self.theme = settings_dict['theme']
         self.darkness = settings_dict['dark mode'] == 'True'
         self.font_a = settings_dict['font a']
@@ -25,9 +24,9 @@ class Settings:
     def save(self, to_change,  new_value):
         settings_dict = pd.read_csv(path + 'settings.csv', index_col=0, header=None).to_dict()[1]
         settings_dict[to_change] = new_value
-        print(type(settings_dict))
+        log.info(type(settings_dict))
         test = pd.DataFrame.from_dict(settings_dict, orient='index').to_csv(path + 'settings.csv')
-        print(test)
+        log.info(test)
 
 # Credit Colors & Fonts for the Color Pallets used
 class Colors:
@@ -60,7 +59,7 @@ class Colors:
         color_tree = Colors.GetColors()
         if dark_mode:
             color_tree[colors].reverse()
-        print(colors)
+        log.info(colors)
 
         theme = {
             'BACKGROUND': color_tree[colors][0],
@@ -80,6 +79,33 @@ class Colors:
 def Layouts():
     sg.theme('THEME')
     sett = Settings()
+
+    main_tab = [
+        [sg.Multiline('', disabled=True, font=(sett.font_b, 14), k='tab main box', expand_x=True, expand_y=True)]
+    ]
+
+    code_tab = [
+        [sg.Multiline('', k='entered code', expand_y=True, expand_x=True)],
+        [sg.Input('', expand_x=True, k='code input'), sg.Button('> Convert >', k='convert code'), sg.Input('test', expand_x=True, k='code output')]
+    ]
+
+    tools_tab = [
+        [sg.Text('Tools')]
+    ]
+
+    help_tab = [
+        [sg.Text('Help')]
+    ]
+
+    tab = [
+        [sg.Radio('Main', 'tab', True, enable_events=True, k='tab main'), sg.Radio('Code', 'tab', enable_events=True, k='tab code'), sg.Radio('Tools', 'tab', enable_events=True, k='tab tools'), sg.Radio('Help', 'tab', enable_events=True, k='tab help')],
+        [
+            sg.Column(main_tab, expand_x=True, expand_y=True, visible=True, k='tab main2'),
+            sg.Column(code_tab, expand_x=True, expand_y=True, visible=False, k='tab code2'),
+            sg.Column(tools_tab, expand_x=True, expand_y=True, visible=False, k='tab tools2'),
+            sg.Column(help_tab, expand_x=True, expand_y=True, visible=False, k='tab help2'),
+        ]
+    ]
 
     menu = [
         [sg.Button('Back', k='back', expand_x=True, visible=False)],
@@ -160,20 +186,15 @@ def Layouts():
         [sg.Text('Nathan Gibson', font=(sett.font_b, 16)), sg.Button('url', k='cred3', font=(sett.font_b, 16))],
     ]
 
-    layout_left = [
+    layout = [
+        [sg.Text('CodeRandom3', font=(sett.font_a, 24, 'bold'), key='title')],
         [
             sg.Frame('M\ne\nn\nu', menu, title_location='wn', vertical_alignment='c', element_justification='center', font=(sett.font_b + ' bold', 16)),
             sg.Frame('Pick Mode', start, expand_x=True, expand_y=True, visible=False, k='new1', font=(sett.font_b + ' bold', 16)),
             sg.Frame('Pick Save', cont, expand_x=True, expand_y=True, visible=False, k='cont1', font=(sett.font_b + ' bold', 16)),
             sg.Frame('Settings', settings, expand_x=True, expand_y=True, visible=False, k='settings1', font=(sett.font_b + ' bold', 16)),
-            sg.Frame('Credits', credits, expand_x=True, expand_y=True, visible=False, k='credits1', font=(sett.font_b + ' bold', 16))
-        ]
-    ]
-
-    layout = [
-        [
-            sg.Column(layout_left, expand_y=True, expand_x=True, k='side left'),
-            # sg.Column([[tab_group()]], expand_x=True, expand_y=True, visible=True, k='tabgroup1')
+            sg.Frame('Credits', credits, expand_x=True, expand_y=True, visible=False, k='credits1', font=(sett.font_b + ' bold', 16)),
+            sg.Frame('Game', tab, expand_x=True, expand_y=True, visible=False, k='tabgroup1', font=(sett.font_b + ' bold', 16)),
         ]
     ]
 

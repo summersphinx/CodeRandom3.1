@@ -1,7 +1,7 @@
 import PySimpleGUI as sg
 
 def tab_group():
-    main = sg.Tab(
+    main_tab = sg.Tab(
             title='Main',
             layout=[[]],
             key='main tab',
@@ -9,7 +9,7 @@ def tab_group():
             expand_y=True
     )
 
-    code = sg.Tab(
+    code_tab = sg.Tab(
             title='Code',
             layout=[[]],
             key='code tab',
@@ -17,7 +17,7 @@ def tab_group():
             expand_y=True
     )
 
-    tools = sg.Tab(
+    tools_tab = sg.Tab(
             title='Tools',
             layout=[[]],
             key='tools tab',
@@ -25,7 +25,7 @@ def tab_group():
             expand_y=True
     )
 
-    help = sg.Tab(
+    help_tab = sg.Tab(
             title='Help',
             layout=[[sg.Button('To Wiki')]],
             key='help tab',
@@ -33,4 +33,3 @@ def tab_group():
             expand_y=True
     )
 
-    return sg.TabGroup([[main, code, tools, help]], expand_y=True, expand_x=True, k='tabgroup2')
